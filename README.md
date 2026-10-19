@@ -11,151 +11,192 @@
 2.由本人开发，如需源码，请联系以下方式，qq:2112698948。
 
 3.项目有很多，并未全部上传，如果未找到想要的，可直接咨询。
-<font style="color:#117cee;">🎈</font><font style="color:#117cee;">系统亮点：AI学习、智能自动组卷、客观题自动批阅、Echarts图形化分析；</font>
+# 高校考试管理系统
 
-# <font style="color:#48b378;">一.系统开发工具与环境搭建</font>
-## <font style="color:#262626;">1.系统设计开发工具</font>
-<font style="color:#262626;">后端使用Java编程语言的Spring boot框架</font>  
-<font style="color:#262626;">项目架构：B/S架构</font>  
-<font style="color:#262626;">运行环境：win10/win11、jdk17</font>
+<p align="center"><img src="images/overview.png" width="100%" alt="高校考试管理系统总览"></p>
 
+## 一、系统介绍
 
+一套面向高校的在线考试系统，分管理员、教师、学生三个角色。教师建题库、组卷、排考、阅卷、看分析；学生在线上答题、查成绩、刷错题、跟 AI 练题；管理员管账号、班级、课程和全平台考试。
 
+组卷不是随机抓题——按课程、知识点、题型先筛出候选，再按难度和目标值的差距算权重做轮盘赌抽样，抽走即从池里移除，所以既能贴着目标难度，又不会每次出同一套。客观题交卷即算分，单选判断走规范化匹配，多选题按集合比：全对满分、漏选给一半、错选零分。主观题交给 DeepSeek 出评分和批注，教师复核后发布成绩。
 
+### 系统亮点
 
-<font style="color:#48b378;">前端：</font>  
-<font style="color:#262626;">技术：框架Vue3 ；UI库：Element-Plus；</font>  
-<font style="color:#262626;">开发工具：Visual Studio Code；</font>
+**① 加权随机组卷算法**
+按课程、知识点、题型筛出候选题，根据题目难度与目标难度的距离计算权重，轮盘赌抽样选题，选中后从候选池移除。目标难度能压住，题目又不会年年重复。
 
----
+**② 客观题答案匹配算法**
+单选题、判断题先把答案规范化（去空格、统一大小写、选项归一），再做匹配评分。交卷后客观题分数立刻出来，教师只需要处理主观题。
 
-<font style="color:#48b378;">后端:</font>  
-<font style="color:#262626;">技术：Java语言、mybatis-plus、Spring boot框架；</font>  
-<font style="color:#262626;">开发工具：IDEA 2025版本；</font>
+**③ 多选题集合评分算法**
+把选项转成集合比较：完全匹配得满分，非空漏选得一半分，错选不得分。比"全对或全错"更贴近真实考试的给分习惯。
 
----
+**④ DeepSeek AI 辅助阅卷**
+把题目、参考答案、学生作答和分值一起送进模型，返回评分和批注，支持并发处理。教师可以逐题改分、写批注，确认后统一发布成绩。
 
-<font style="color:#48b378;">数据库：</font>  
-<font style="color:#262626;">数据库：mysql5.7/8.0 </font>  
-<font style="color:#262626;">数据库工具：Navicat12版本；</font>
+**⑤ AI 学习全流程**
+学生选课程、难度、题型创建学习会话，AI 出题 → 学生作答 → AI 评价，过程中记录答对数，结束会话时生成一份学习总结，回头能看自己哪块弱。
 
----
+**⑥ 考试过程管理**
+答题页每 15 秒保存一次有变化的答案，配倒计时、到点自动交卷;后台还有定时收卷任务和缺考记录，考试结束后的收尾不用人工盯。
 
-# <font style="color:#48b378;">二.系统实现（部分截图）</font>
-## 2.1 学生
-### 2.1.1 首页
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684710187-18d915a2-287e-4faf-996c-660e0984055a.png)
+**⑦ 错题复习完整链路**
+判定为错的题自动同步进个人错题本，带参考答案、解析、错误次数和知识点分布，可以按课程筛，弄懂之后手动移除。
 
-### 2.1.2 我的考试
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684710425-2df5546e-0629-4ef7-b8e1-6df713e662fc.png)
+**⑧ ECharts 多角色分析**
+管理员看平台考试与成绩概况，教师定位低正确率题目和薄弱知识点，学生看个人成绩趋势和课程表现——同一批考试数据，三个角色看到各自该看的那一面。
 
-### 2.1.3 考试记录
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684710101-0cee1392-221f-4bbd-95cc-2b39dd026cd2.png)
+### 技术选型
 
-### 2.1.4 考试记录详情
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684710383-219637ad-2b49-476e-adf2-4800f132678b.png)
+| 层次 | 技术 |
+| --- | --- |
+| 架构 | B/S、MVC、前后端分离、三角色权限管理 |
+| 后端 | Java 17、Spring Boot 3.3.1、Spring MVC、MyBatis-Plus、JWT |
+| 数据库 | MySQL |
+| 前端 | Vue 3、Vite、Element Plus、Vue Router、Pinia、Axios |
+| 图表 | ECharts |
+| 文件处理 | Apache POI（题库 Excel 导入导出） |
+| AI 能力 | DeepSeek API（主观题阅卷、AI 出题与评价） |
 
-### 2.1.5 错题本
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684710296-e109d4bb-8a3f-4acb-8911-73681e956703.png)
+## 二、角色与功能
 
-### 2.1.6 学习统计
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684712285-7624c5a8-64e1-46c4-9bd8-551106b8e012.png)
+| 角色 | 主要功能 |
+| --- | --- |
+| 管理员 | 数据看板、用户管理（封禁/重置密码/导出）、班级与课程管理、全平台考试查看与状态调整、成绩统计与风险考试分析、轮播图/公告/操作日志 |
+| 教师 | 教学概览、题库管理（五种题型 + Excel 导入导出）、试卷管理（手动选题 / 自动组卷）、考试管理（关联班级、时长、及格线）、在线阅卷（AI 辅助）、答卷与成绩分析 |
+| 学生 | 首页（考试安排、公告、排行榜）、在线考试（答题卡、标记、倒计时、自动保存）、成绩查询（逐题得分与解析）、错题本、学习统计、AI 学习 |
 
-### 2.1.7 AI学习
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684712190-e3fcd385-a13d-4385-9af3-f1145a2a0958.png)
+## 三、系统截图
 
-### 2.1.8 个人中心
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684712702-339e5c09-dda7-4d93-aab2-29483d9bea2d.png)
+### 学生端
 
-## 2.2 教师
-### 2.2.1 教学概述
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684713057-a05fd5bf-2778-4cd2-a1ea-7ce28b1727db.png)
+#### 首页
 
-### 2.2.2 题库管理
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684713297-66fcbe49-995e-4803-aeb3-3f042374a20e.png)
+<p align="center"><img src="images/stu-01-home.png" width="100%" alt="学生端首页"></p>
 
-### 2.2.3 试卷管理
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684713190-8852bfe7-f829-4948-9926-8a3f85fd5091.png)
+待参加考试、已出成绩、平均分、错题数四个指标直接摆在上面，下面是近期考试安排、系统公告、成绩排行榜和快捷入口。
 
-### 2.2.4 考试管理
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684713189-1fe28ac1-8138-4b42-b4c1-b45756eedb2f.png)
+#### 我的考试
 
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684713466-c13178a5-fa46-437a-8e6c-a6d97d7db2f2.png)
+<p align="center"><img src="images/stu-02-my-exams.png" width="100%" alt="我的考试"></p>
 
-### 2.2.5 在线阅卷
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684714486-112f8665-aa82-40e2-92c4-59481264c1e9.png)
+按状态筛考试，进行中的直接进考场，未开始和已结束的分开显示时间和时长。
 
-### 2.2.6 答卷管理
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684715347-8a965001-d5e0-4b5f-bc97-888021a204fb.png)
+#### 考试记录
 
-### 2.2.7 成绩分析
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684715250-c7f9916d-d642-4f1e-8947-fb5bc558ee88.png)
+<p align="center"><img src="images/stu-03-exam-records.png" width="100%" alt="考试记录"></p>
 
-## 2.3 管理员
-### 2.3.1 数据看板
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684715218-c37d0443-d3d4-465b-a974-5294c30ecbc7.png)
+历史考试列表，标注得分、用时和状态，未发布的成绩显示为待发布。
 
-### 2.3.2学生管理
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684715500-ed3ec1e3-bca3-4e54-a0a5-80d52dbaf91c.png)
+#### 考试记录详情
 
-### 2.3.3 教师管理
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684715391-4707d012-4c00-4831-adc5-b7a2323f91a3.png)
+<p align="center"><img src="images/stu-04-record-detail.png" width="100%" alt="考试记录详情"></p>
 
-### 2.3.4 班级管理
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684715901-30769025-2d68-43d9-8513-6f013e05b999.png)
+逐题看自己的作答、正确答案、得分和解析，主观题能看到教师批注。
 
-### 2.3.5 课程管理
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684716306-dcad6797-a153-47b1-bb28-224127d55f52.png)
+#### 错题本
 
-### 2.3.6 考试管理
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684716345-db8da7ca-f0fb-491f-9817-d328b17741f9.png)
+<p align="center"><img src="images/stu-05-wrong-book.png" width="100%" alt="错题本"></p>
 
-### 2.3.7 成绩管理
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684716400-6b870982-2ad6-4f89-94ac-84f4f2f27224.png)
+按课程筛选，每题标了错误次数和知识点，展开看解析，掌握后点移除。
 
-### 2.3.8 数据统计
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684716402-3f85a267-b9ce-4f0a-995f-62d4d9d6db61.png)
+#### 学习统计
 
-# <font style="color:#48b378;">三.系统代码结构截图</font>
-## <font style="color:#262626;">3.1 前端</font>
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684717413-8abeb073-2099-411a-bcf4-dd40dc029211.png)
+<p align="center"><img src="images/stu-06-stats.png" width="100%" alt="学习统计"></p>
 
-## 3.2 后端
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684717462-870c719e-43c7-42eb-ad78-8cb6fd90efc1.png)
+考试次数、平均分、通过率、成绩趋势曲线、各课程成绩对比和错题知识点分布。
 
-## 3.3 数据库
-<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/45326128/1783684716860-4a16911a-9aea-4a4f-abe9-d694dfc57f91.png)
+#### AI 学习
 
-# <font style="color:#48b378;">四.</font><font style="color:#1aad19;">源码获取</font>
-<font style="color:#000000;">1.原创系统非商用，非开源，非无偿。</font>
+<p align="center"><img src="images/stu-07-ai-learn.png" width="100%" alt="AI 学习"></p>
 
-<font style="color:#000000;">2.项目有很多，并未全部上传，如果未找到想要的，可直接咨询。</font>
+选课程、难度（1-5）、每次出题数量后开始会话，AI 出题 → 提交答案 → 评价反馈，右上角结束学习会生成总结。
 
+### 教师端
 
+#### 教学概览
+
+<p align="center"><img src="images/tea-01-dashboard.png" width="100%" alt="教师教学概览"></p>
+
+课程题量、题型分布、待批阅数量和考试交卷进度，进来先知道今天要干什么。
+
+#### 题库管理
+
+<p align="center"><img src="images/tea-02-question-bank.png" width="100%" alt="题库管理"></p>
+
+单选、多选、判断、填空、主观五类题统一维护，关联课程和知识点，支持 Excel 批量导入导出。
+
+#### 试卷管理
+
+<p align="center"><img src="images/tea-03-papers.png" width="100%" alt="试卷管理"></p>
+
+两种组卷方式：手动选题排序设分值，或按题型数量 + 知识点 + 目标难度自动组卷（加权随机算法在这里生效）。
+
+#### 考试管理
+
+<p align="center"><img src="images/tea-04-exams.png" width="100%" alt="考试管理"></p>
+
+试卷关联班级，设置开考时间、时长、及格线，随时看参考人数和交卷情况，可结束或重新开放。
+
+#### 在线阅卷
+
+<p align="center"><img src="images/tea-05-grading.png" width="100%" alt="在线阅卷"></p>
+
+左侧答卷列表，右侧主观题批阅区，上方「AI批阅全部试题」一键跑完，教师逐题复核改分、写批注再发布。
+
+#### 答卷管理
+
+<p align="center"><img src="images/tea-06-answer-sheets.png" width="100%" alt="答卷管理"></p>
+
+按考试看全部答卷，单个学生的得分、用时、提交状态都列在表里，可导出成绩表。
+
+#### 成绩分析
+
+<p align="center"><img src="images/tea-07-score-analysis.png" width="100%" alt="成绩分析"></p>
+
+成绩区间分布、题目正确率、知识点正确率三块图表，低正确率题目直接标出来，方便下次课重点讲。
+
+### 管理员端
+
+#### 数据看板
+
+<p align="center"><img src="images/adm-01-dashboard.png" width="100%" alt="管理员数据看板"></p>
+
+用户、教师、学生、课程、题库、考试六项统计，配参考趋势和成绩分布。
+
+#### 学生管理
+
+<p align="center"><img src="images/adm-02-students.png" width="100%" alt="学生管理"></p>
+
+账号维护、详情查看、封禁解封、密码重置，支持按班级和状态筛选、数据导出。
+
+#### 班级管理
+
+<p align="center"><img src="images/adm-03-classes.png" width="100%" alt="班级管理"></p>
+
+班级增删改查、关联课程与学生，考试推送按班级走。
+
+#### 考试管理
+
+<p align="center"><img src="images/adm-04-exams.png" width="100%" alt="管理员考试管理"></p>
+
+全平台考试一览，按课程、教师、状态筛选，可以手动调整考试状态。
+
+#### 成绩管理
+
+<p align="center"><img src="images/adm-05-scores.png" width="100%" alt="成绩管理"></p>
+
+成绩查询与导出，课程平均分、课程及考试通过率、风险考试分析集中在这里。
+
+#### 数据统计
+
+<p align="center"><img src="images/adm-06-statistics.png" width="100%" alt="数据统计"></p>
+
+跨课程、跨考试的多维对比图表，看整体教学效果用这一页。
+
+## 四、说明
+
+- 文档展示 21 张截图，需要了解更多，请联系我。
+- 系统为 B/S 三端（管理员 / 教师 / 学生），前后端分离，本地部署 Windows + MySQL 即可跑起来。
+- 题库支持 Excel 导入导出，批量建题不用一条条录。
